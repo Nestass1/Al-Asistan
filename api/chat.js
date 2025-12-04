@@ -1,8 +1,7 @@
 // chat.js
-
 const OpenAI = require("openai");
 
-// API key Vercel Environment Variable'dan gelir
+// API key (Vercel Environment Variables'dan)
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -10,10 +9,8 @@ const client = new OpenAI({
 async function generateReply(message) {
   try {
     if (!message || message.trim() === "") {
-      return "Lütfen bir mesaj yazın 🙂";
+      return "Lütfen bir mesaj yazınız 🙂";
     }
-
-    console.log("🔗 OpenAI API isteği gönderiliyor...");
 
     const completion = await client.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -21,7 +18,7 @@ async function generateReply(message) {
         {
           role: "system",
           content:
-            "Sen kullanıcıya Türkçe konuşan, doğal bir kişisel yapay zekâ asistanısın. Konuşmalarında yardımsever, sıcak ama profesyonel bir ton kullan.",
+            "Sen Türkçe konuşan yardımsever bir asistansın. Samimi ama profesyonel şekilde yardımcı ol.",
         },
         { role: "user", content: message },
       ],
@@ -30,19 +27,10 @@ async function generateReply(message) {
     });
 
     return completion.choices[0].message.content.trim();
-  } catch (err) {
-    console.error("❌ OpenAI API hatası:", err.message);
-    return fallbackReply(message);
+  } catch (error) {
+    console.error("❌ OpenAI API hatası:", error.message);
+    return "Üzgünüm, şu anda yanıt veremiyorum 😔";
   }
-}
-
-// Yedek mod (API hatasında geri dönüş)
-function fallbackReply(text) {
-  const lower = text.toLowerCase();
-  if (lower.includes("merhaba")) return "Merhaba! 👋 Nasılsın?";
-  if (lower.includes("hava")) return "Bugün güneşli bir gün gibi görünüyor ☀️";
-  if (lower.includes("görüşürüz")) return "Hoşça kal! 👋";
-  return "Bağlantı şu anda kısıtlı, ama en kısa zamanda dönerim 💡";
 }
 
 module.exports = { generateReply };
