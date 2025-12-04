@@ -1,19 +1,14 @@
 {
   "name": "ai-assistant",
   "version": "1.0.0",
-  "description": "ChatGPT tarzı kişisel asistan projesi",
-  "main": "server.js",
+  "description": "ChatGPT tarzı kişisel yapay zekâ asistanı",
+  "main": "api/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node api/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.3"
-  },
-  "author": "Sen",
-  "license": "MIT"
+    "express": "^4.18.2",
+    "openai": "^4.27.1"
+  }
 }
