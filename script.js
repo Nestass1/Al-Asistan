@@ -1,46 +1,54 @@
+// public/script.js
+
+// ✅ API endpoint — Vercel deploy uyumlu
+const API_URL = "/api/chat";
+
 const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 
-// FastAPI backend endpoint
-const API_URL = "http://127.0.0.1:8000/chat";
-
-// Event listeners
+// Gönderme olayları
 sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// Mesaj gönderme
 function sendMessage() {
-  const msg = userInput.value.trim();
-  if (!msg) return;
+  const message = userInput.value.trim();
+  if (!message) return;
 
-  appendMessage("user", msg);
+  appendMessage("user", message);
   userInput.value = "";
+  appendMessage("bot", "✳️ Düşünüyorum...");
 
-  // Backend’e gönder
+  // API’ye istek at
   fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ message: msg }),
+    body: JSON.stringify({ message }),
   })
     .then((res) => res.json())
     .then((data) => {
+      // Eski "Düşünüyorum..." mesajını kaldır
+      document.querySelectorAll(".message.bot:last-child")[0].remove();
       appendMessage("bot", data.reply);
     })
     .catch(() => {
-      appendMessage("bot", "⚠️ Bağlantı hatası: FastAPI sunucusu aktif mi?");
+      document.querySelectorAll(".message.bot:last-child")[0].remove();
+      appendMessage(
+        "bot",
+        "⚠️ Sunucuya ulaşılamıyor. Lütfen daha sonra tekrar deneyin."
+      );
     });
 }
 
-// Mesaj ekleme
+// Sohbet kutusuna yeni mesaj ekler
 function appendMessage(sender, text) {
-  const messageEl = document.createElement("div");
-  messageEl.classList.add("message", sender);
-  messageEl.innerText = text;
-  chatBox.appendChild(messageEl);
+  const msg = document.createElement("div");
+  msg.classList.add("message", sender);
+  msg.textContent = text;
+  chatBox.appendChild(msg);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
